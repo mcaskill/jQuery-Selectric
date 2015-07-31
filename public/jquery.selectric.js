@@ -9,9 +9,9 @@
  *    /,'
  *   /'
  *
- * Selectric Ϟ v1.9.3 (Jul 08 2015) - http://lcdsantos.github.io/jQuery-Selectric/
+ * Selectric Ϟ v1.9.3 (Jan 14 2016) - http://lcdsantos.github.io/jQuery-Selectric/
  *
- * Copyright (c) 2015 Leonardo Santos; Dual licensed: MIT/GPL
+ * Copyright (c) 2016 Leonardo Santos; Dual licensed: MIT/GPL
  *
  */
 
@@ -142,7 +142,7 @@
               originalWidth = $original.width();
 
           $.each(postfixes, function(i, currClass) {
-            var c = customClass.prefix + currClass;
+            var c = customClass.prefix + '-' + currClass;
             _this.classes[currClass.toLowerCase()] = customClass.camelCase ? c : _utils.toDash(c);
           });
 
@@ -255,13 +255,19 @@
             isEnabled = true;
 
             // Not disabled, so... Removing disabled class and bind hover
-            $outerWrapper.removeClass(_this.classes.disabled).on('mouseenter' + bindSufix + ' mouseleave' + bindSufix, function(e) {
-              $(this).toggleClass(_this.classes.hover);
-
+            $outerWrapper.removeClass(_this.classes.disabled).on('mouseenter' + bindSufix, function(e) {
+              $(this).addClass(_this.classes.hover);
               // Delay close effect when openOnHover is true
               if ( _this.options.openOnHover ) {
                 clearTimeout(_this.closeTimer);
-                e.type == 'mouseleave' ? _this.closeTimer = setTimeout(_close, _this.options.hoverIntentTimeout) : _open();
+                _open();
+              }
+            }).on( 'mouseleave' + bindSufix, function(e){
+              $(this).removeClass(_this.classes.hover);
+              // Delay close effect when openOnHover is true
+              if ( _this.options.openOnHover ) {
+                clearTimeout(_this.closeTimer);
+                _this.closeTimer = setTimeout(_close, _this.options.hoverIntentTimeout);
               }
             });
 
