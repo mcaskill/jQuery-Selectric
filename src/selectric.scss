@@ -62,6 +62,10 @@ $inner-height: $height - ($border-width * 2);
   }
 }
 
+.selectric-focus .selectric {
+  border-color: darken($main-color, 20%);
+}
+
 .selectric-hover .selectric {
   border-color: darken($main-color, 10%);
 

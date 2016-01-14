@@ -123,6 +123,19 @@ $('select').selectric({
   keySearchTimeout: 500,
 
   /*
+   * Type: Object
+   * Description: Customize keyboard navigation.
+   *              Select: Tab, Enter, Escape, Space
+   *              Open: Space, Left , Up, Right, Down
+   *              Close: Tab, Escape
+   */
+  keys: {
+    select: [ 9, 13, 27, 32 ],
+    open: [ 32, 37, 38, 39, 40 ],
+    close: [ 9, 27 ]
+  },
+
+  /*
    * Type: String [HTML]
    * Description: Markup for open options button
    */
@@ -133,6 +146,12 @@ $('select').selectric({
    * Description: Initialize plugin on mobile browsers
    */
   disableOnMobile: true,
+
+  /*
+   * Type: Boolean
+   * Description: Open select box on focus
+   */
+  openOnFocus: true,
 
   /*
    * Type: Boolean
@@ -164,7 +183,7 @@ $('select').selectric({
    *              Every class in 'postfixes' should be separate with a
    *              space and follow this exact order:
    *              'Input Items Open Disabled TempShow HideSelect Wrapper
-   *              Hover Responsive Above Scroll Group GroupLabel'
+   *              Focus Hover Responsive Above Scroll Group GroupLabel'
    */
   customClass: {
     prefix: 'selectric',

@@ -53,6 +53,10 @@
   border-bottom: none;
 }
 
+.selectric-focus .selectric {
+  border-color: #AAA;
+}
+
 .selectric-hover .selectric {
   border-color: #C4C4C4;
 }

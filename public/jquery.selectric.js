@@ -9,7 +9,7 @@
  *    /,'
  *   /'
  *
- * Selectric Ϟ v1.9.3 (Jan 14 2016) - http://lcdsantos.github.io/jQuery-Selectric/
+ * Selectric Ϟ v1.9.3 (Jan 15 2016) - http://lcdsantos.github.io/jQuery-Selectric/
  *
  * Copyright (c) 2016 Leonardo Santos; Dual licensed: MIT/GPL
  *
@@ -19,28 +19,34 @@
   'use strict';
 
   var pluginName = 'selectric',
-      classList = 'Input Items Open Disabled TempShow HideSelect Wrapper Hover Responsive Above Scroll Group GroupLabel',
+      classList = 'Input Items Open Disabled TempShow HideSelect Wrapper Focus Hover Responsive Above Scroll Group GroupLabel',
       bindSufix = '.sl',
       defaults = {
         onChange: function(elm) { $(elm).change(); },
-        maxHeight: 300,
-        keySearchTimeout: 500,
-        arrowButtonMarkup: '<b class="button">&#x25be;</b>',
-        disableOnMobile: true,
-        openOnHover: false,
-        hoverIntentTimeout: 500,
-        expandToItemText: false,
-        responsive: false,
-        preventWindowScroll: true,
-        inheritOriginalWidth: false,
-        allowWrap: true,
-        customClass: {
-          prefix: pluginName,
-          camelCase: false,
-          overwrite: true
+        maxHeight        : 300,
+        keySearchTimeout : 500,
+        keys: {
+          select : '9|13|27|32', // Tab | Enter | Escape | Space
+          open   : '32|37|38|39|40', // Space | Left | Up | Right | Down
+          close  : '9|27' // Tab | Escape
         },
-        optionsItemBuilder: '{text}', // function(itemData, element, index)
-        labelBuilder: '{text}' // function(currItem)
+        arrowButtonMarkup    : '<b class="button">&#x25be;</b>',
+        disableOnMobile      : true,
+        openOnFocus          : true,
+        openOnHover          : false,
+        hoverIntentTimeout   : 500,
+        expandToItemText     : false,
+        responsive           : false,
+        preventWindowScroll  : true,
+        inheritOriginalWidth : false,
+        allowWrap            : true,
+        customClass          : {
+          prefix    : pluginName,
+          camelCase : false,
+          overwrite : true
+        },
+        optionsItemBuilder : '{text}', // function(itemData, element, index)
+        labelBuilder       : '{text}' // function(currItem)
       },
       hooks = {
         add: function(callbackName, hookName, fn) {
@@ -116,6 +122,7 @@
             finalWidth,
             optionsLength,
             eventTriggers,
+            keyTriggers,
             isMobile = /android|ip(hone|od|ad)/i.test(navigator.userAgent),
             tabindex = $original.prop('tabindex'),
             labelBuilder;
@@ -163,6 +170,22 @@
 
           $original.on(eventTriggers).wrap('<div class="' + _this.classes.hideselect + '">');
           $.extend(_this, eventTriggers);
+
+          keyTriggers = {
+            open   : false,
+            close  : false,
+            select : false
+          };
+
+          $.each(_this.options.keys, function(i, codes) {
+            if ( codes ) {
+              if ( $.isArray(codes) ) {
+                codes = codes.join('|');
+              }
+
+              keyTriggers[i] = new RegExp('^(' + codes + ')$', 'i');
+            }
+          });
 
           labelBuilder = _this.options.labelBuilder;
 
@@ -280,7 +303,7 @@
 
             // Toggle open/close
             $wrapper.on('click' + bindSufix, function(e) {
-              isOpen ? _close() : _open(e);
+              (isOpen ? _close() : _open(e));
             });
 
             $input
@@ -316,13 +339,20 @@
                 }
               })
               .on('focusin' + bindSufix, function(e) {
+                $outerWrapper.addClass(_this.classes.focus);
+
                 // Stupid, but necessary... Prevent the flicker when
                 // focusing out and back again in the browser window
                 $input.one('blur', function() {
                   $input.blur();
                 });
 
-                isOpen || _open(e);
+                if ( _this.options.openOnFocus ) {
+                  isOpen || _open(e);
+                }
+              })
+              .on('focusout' + bindSufix, function(e) {
+                $outerWrapper.removeClass(_this.classes.focus);
               })
               .on('oninput' in $input[0] ? 'input' : 'keyup', function() {
                 if ( $input.val().length ) {
@@ -372,14 +402,25 @@
         function _handleSystemKeys(e) {
           var key = e.keyCode || e.which;
 
-          if ( key == 13 ) {
+          if ( key == 13 || key == 32 ) {
             e.preventDefault();
           }
 
-          // Tab / Enter / ESC
-          if ( /^(9|13|27)$/.test(key) ) {
-            e.stopPropagation();
-            _select(selected, true);
+          if ( isOpen ) {
+            // Select the new option and close the box
+            if ( keyTriggers.select && keyTriggers.select.test(key) ) {
+              e.stopPropagation();
+              _select(selected, true);
+            }
+            // Close the box and keep the previous option
+            else if ( keyTriggers.close && keyTriggers.close.test(key) ) {
+              e.stopPropagation();
+              selected = currValue;
+              _close();
+            }
+          // Open the select box in case it was closed
+          } else if ( keyTriggers.open && keyTriggers.open.test(key) ) {
+            _open();
           }
         }
 
