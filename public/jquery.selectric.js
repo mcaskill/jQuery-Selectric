@@ -214,6 +214,7 @@
                 var $elm = $(this),
                     optionText = $elm.html(),
                     selectDisabled = $elm.prop('disabled'),
+                    optionClasses = $elm.attr('class'),
                     itemBuilder = _this.options.optionsItemBuilder;
 
                 _this.items[currIndex] = {
@@ -221,13 +222,19 @@
                   value    : $elm.val(),
                   text     : optionText,
                   slug     : _utils.replaceDiacritics(optionText),
+                  classes  : optionClasses,
                   disabled : selectDisabled
                 };
 
                 _$li += _utils.format('<li data-index="{1}" class="{2}">{3}</li>',
                   currIndex,
-                  $.trim([currIndex == currValue ? 'selected' : '', currIndex == optionsLength - 1 ? 'last' : '', selectDisabled ? 'disabled' : ''].join(' ')),
-                  $.isFunction(itemBuilder) ? itemBuilder(_this.items[currIndex], $elm, currIndex) : _utils.format(itemBuilder, _this.items[currIndex])
+                  $.trim([
+                    optionClasses,
+                    (currIndex == currValue ? 'selected' : ''),
+                    (currIndex == optionsLength - 1 ? 'last' : ''),
+                    (selectDisabled ? 'disabled' : '')
+                  ].join(' ')),
+                  ($.isFunction(itemBuilder) ? itemBuilder(_this.items[currIndex], $elm, currIndex) : _utils.format(itemBuilder, _this.items[currIndex]))
                 );
 
                 currIndex++;
