@@ -336,7 +336,7 @@
                 }
               });
 
-            $original.prop('tabindex', false);
+            $original.prop('tabindex', -1);
 
             // Remove styles from items box
             // Fix incorrect height when refreshed is triggered with fewer options
