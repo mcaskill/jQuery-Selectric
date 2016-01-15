@@ -175,6 +175,7 @@ $inner-height: $height - ($border-width * 2);
       color: #444;
     }
 
+    &.focused,
     &:hover {
       background: #F0F0F0;
       color: #444;

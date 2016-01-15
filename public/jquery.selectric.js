@@ -321,7 +321,8 @@
                   $input.val('');
                 }, _this.options.keySearchTimeout);
 
-                var key = e.keyCode || e.which;
+                var key = e.keyCode || e.which,
+                    action = (isOpen ? _focus : _select);
 
                 // If it's a directional key
                 // 37 => Left
@@ -335,7 +336,7 @@
                     }
                   }
 
-                  _select(_utils[(key < 39 ? 'previous' : 'next') + 'EnabledItem'](_this.items, selected));
+                  action(_utils[(key < 39 ? 'previous' : 'next') + 'EnabledItem'](_this.items, selected));
                 }
               })
               .on('focusin' + bindSufix, function(e) {
@@ -359,7 +360,8 @@
                   // Search in select options
                   $.each(_this.items, function(i, elm) {
                     if ( RegExp('^' + $input.val(), 'i').test(elm.slug) && !elm.disabled ) {
-                      _select(i);
+                      var action = (isOpen ? _focus : _select);
+                      action(i);
                       return false;
                     }
                   });
@@ -515,24 +517,6 @@
         function _close() {
           _utils.triggerCallback('BeforeClose', _this);
 
-          if ( currValue != selected ) {
-            _utils.triggerCallback('BeforeChange', _this);
-
-            var text = _this.items[selected].text;
-
-            // Apply changed value to original select
-            $original
-              .prop('selectedIndex', currValue = selected)
-              .data('value', text);
-
-            // Change label text
-            $label.html(
-              $.isFunction(labelBuilder) ? labelBuilder(_this.items[selected]) : _utils.format(labelBuilder, _this.items[selected])
-            )
-
-            _utils.triggerCallback('Change', _this);
-          }
-
           // Remove custom events on document
           $doc.off(bindSufix);
 
@@ -542,6 +526,26 @@
           isOpen = false;
 
           _utils.triggerCallback('Close', _this);
+        }
+
+        // Highlight option
+        function _focus(index, select) {
+          // Parameter index is required
+          if ( index == undefined ) {
+            return;
+          }
+
+          // If element is disabled, can't highlight it
+          if ( !_this.items[index].disabled ) {
+            // If 'select' is false (default), the highlighted item won't be selected
+            $li
+              .removeClass('focused')
+              .eq(selected = index)
+              .addClass('focused');
+
+            _detectItemVisibility(index);
+            select && _select(index);
+          }
         }
 
         // Select option
@@ -561,7 +565,29 @@
               .addClass('selected');
 
             _detectItemVisibility(index);
+            _change();
             close && _close();
+          }
+        }
+
+        // Change label text and selection
+        function _change() {
+          if ( currValue != selected ) {
+            _utils.triggerCallback('BeforeChange', _this);
+
+            var text = _this.items[selected].text;
+
+            // Apply changed value to original select
+            $original
+              .prop('selectedIndex', currValue = selected)
+              .data('value', text);
+
+            // Change label text
+            $label.html(
+              $.isFunction(labelBuilder) ? labelBuilder(_this.items[selected]) : _utils.format(labelBuilder, _this.items[selected])
+            )
+
+            _utils.triggerCallback('Change', _this);
           }
         }
 

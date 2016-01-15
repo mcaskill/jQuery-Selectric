@@ -160,7 +160,7 @@
   background: #EFEFEF;
   color: #444;
 }
-.selectric-items li:hover {
+.selectric-items li.focused, .selectric-items li:hover {
   background: #F0F0F0;
   color: #444;
 }
