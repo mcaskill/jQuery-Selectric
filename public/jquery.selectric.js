@@ -60,6 +60,9 @@
         }
       },
       _utils = {
+        escapeRegExp: function(s) {
+          return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        },
         // Replace diacritics
         replaceDiacritics: function(s) {
           // /[\340-\346]/g, // a
@@ -359,7 +362,7 @@
                 if ( $input.val().length ) {
                   // Search in select options
                   $.each(_this.items, function(i, elm) {
-                    if ( RegExp('^' + $input.val(), 'i').test(elm.slug) && !elm.disabled ) {
+                    if ( RegExp('^' + _utils.escapeRegExp($input.val()), 'i').test(elm.slug) && !elm.disabled ) {
                       var action = (isOpen ? _focus : _select);
                       action(i);
                       return false;
