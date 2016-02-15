@@ -371,7 +371,20 @@
                 }
               });
 
-            $original.prop('tabindex', -1);
+            $original
+              .prop('tabindex', -1)
+              .on('focusin' + bindSufix, function(e) {
+                $outerWrapper.addClass(_this.classes.focus);
+
+                if ( _this.options.openOnFocus ) {
+                  isOpen || _open(e);
+                } else {
+                  $input.focus();
+                }
+              })
+              .on('focusout' + bindSufix, function(e) {
+                $outerWrapper.removeClass(_this.classes.focus);
+              });
 
             // Remove styles from items box
             // Fix incorrect height when refreshed is triggered with fewer options
