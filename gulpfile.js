@@ -37,7 +37,7 @@ gulp.task('js', ['bump'], function() {
         ' *    /,\'',
         ' *   /\'',
         ' *',
-        ' * Selectric \u03DE v<%= pkg.version %> (<%= new Date().toString().substr(4, 11) %>) - http://lcdsantos.github.io/jQuery-Selectric/',
+        ' * Selectric \u03DE v<%= pkg.version %>+ (<%= new Date().toString().substr(4, 11) %>) - http://lcdsantos.github.io/jQuery-Selectric/',
         ' *',
         ' * Copyright (c) <%= new Date().getFullYear() %> Leonardo Santos; Dual licensed: MIT\/GPL',
         ' *',
@@ -55,7 +55,7 @@ gulp.task('js-min', ['bump'], function() {
 
   return gulp.src('src/jquery.selectric.js')
     .pipe($.uglify())
-    .pipe($.header('/*! Selectric ϟ v<%= pkg.version %> (<%= new Date().toJSON().slice(0,10) %>) - git.io/tjl9sQ - Copyright (c) <%= new Date().getFullYear() %> Leonardo Santos - Dual licensed: MIT/GPL */\n', { pkg: pkg }))
+    .pipe($.header('/*! Selectric ϟ v<%= pkg.version %>+ (<%= new Date().toJSON().slice(0,10) %>) - git.io/tjl9sQ - Copyright (c) <%= new Date().getFullYear() %> Leonardo Santos - Dual licensed: MIT/GPL */\n', { pkg: pkg }))
     .pipe($.rename({ suffix: '.min' }))
     .pipe(gulp.dest('./public'))
     .pipe($.connect.reload());
