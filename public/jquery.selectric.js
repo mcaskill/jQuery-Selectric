@@ -9,7 +9,7 @@
  *    /,'
  *   /'
  *
- * Selectric Ϟ v1.9.3 (Jan 15 2016) - http://lcdsantos.github.io/jQuery-Selectric/
+ * Selectric Ϟ v1.9.3+ (Feb 15 2016) - http://lcdsantos.github.io/jQuery-Selectric/
  *
  * Copyright (c) 2016 Leonardo Santos; Dual licensed: MIT/GPL
  *
@@ -484,7 +484,18 @@
             // Give dummy input focus
             $input.val('').is(':focus') || $input.focus();
 
-            $doc.on('click' + bindSufix, _close).on('scroll' + bindSufix, _isInViewport);
+            $doc
+              .on('click' + bindSufix, function(event){
+                var $target = $(event.target);
+                if (
+                    $target.closest('.' + _this.classes.items).length ||
+                    $target.is('html')
+                ) {
+                  return false;
+                }
+                _close();
+              })
+              .on('scroll' + bindSufix, _isInViewport);
             _isInViewport();
 
             // Prevent window scroll when using mouse wheel inside items box

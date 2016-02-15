@@ -467,7 +467,18 @@
             // Give dummy input focus
             $input.val('').is(':focus') || $input.focus();
 
-            $doc.on('click' + bindSufix, _close).on('scroll' + bindSufix, _isInViewport);
+            $doc
+              .on('click' + bindSufix, function(event){
+                var $target = $(event.target);
+                if (
+                    $target.closest('.' + _this.classes.items).length ||
+                    $target.is('html')
+                ) {
+                  return false;
+                }
+                _close();
+              })
+              .on('scroll' + bindSufix, _isInViewport);
             _isInViewport();
 
             // Prevent window scroll when using mouse wheel inside items box
